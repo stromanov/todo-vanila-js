@@ -1,160 +1,149 @@
-const inputField = document.querySelector("input#value-to-save");
-const btn = document.querySelector("button#submite");
-const btnDelete = document.querySelector("button#delete");
+const inputField = document.querySelector('#value-to-save');
+const btn = document.querySelector('#submite');
+const btnDelete = document.querySelector('#delete');
 
-const filterAll = document.querySelector("button#filter-all");
-const filterProcess = document.querySelector("button#filter-process");
-const filterCompleted = document.querySelector("button#filter-completed");
+const filterAll = document.querySelector('#filter-all');
+const filterProcess = document.querySelector('#filter-process');
+const filterCompleted = document.querySelector('#filter-completed');
 
-const filter = (tasks, type = "tasks") => {
-  if (type == "tasksProcess") {
-    let clearTasks = tasks.filter((task) => !task.isDone);
-    return clearTasks;
-  }
-  if (type == "tasksCompleted") {
-    let clearTasks = tasks.filter((task) => task.isDone);
-    return clearTasks;
-  }
-  if (type == "tasks") {
-    return tasks;
-  }
+let todos = JSON.parse(localStorage.getItem('tasksAll'))
+let filterStatus = localStorage.getItem('filter');
+
+// Очистка выводимых данных после обновление LC
+const clearTasks = () => {
+  let divContent = document.querySelector('#content');
+  divContent.innerHTML = '';
 };
+
+const filter = () => {
+  if (todos){
+    console.log(typeof(filterStatus))
+    if (filterStatus === 'tasksProcess') {
+      return todos.filter((task) => !task.isDone);
+    }
+    if (filterStatus === 'tasksCompleted') {
+      return todos.filter((task) => task.isDone);
+    } else {
+      return todos;
+    }
+  }
+}
+
+
 
 // Выводим таски на экран
-const viewTask = () => {
-  taskParse = JSON.parse(localStorage.getItem("tasks"));
-  taskName = filter(taskParse, localStorage.getItem("filter"));
-
-  if (!localStorage.getItem("filter")) {
-    taskName = localStorage.setItem('filter', 'tasks')
+const displayTasks = () => {
+  clearTasks();
+  if  (!localStorage.getItem('filter')){
+    localStorage.setItem('filter', 'tasksAll')
   }
+  tasks = filter();
 
-  if (JSON.parse(localStorage.getItem("tasks"))) {
-    for (let i = 0; i < taskName.length; i++) {
+  if (todos) {
+
+      tasks.forEach( (task, i) => {
+      let taskContainer = document.querySelector('div#content');
       // Строим DOM элементы
-      let div = document.createElement("div");
-      div.setAttribute("id", i);
-      let delBtn = document.createElement("button");
-      delBtn.innerHTML = "Х";
+      let div = document.createElement('div');
+      div.setAttribute('id', i);
+      div.setAttribute('class', 'task');
 
-      delBtn.id = taskName[i].id;
+      let delBtn = document.createElement('button');
+      delBtn.innerHTML = 'Х';
+      delBtn.id = task.id; 
+      delBtn.setAttribute('class','deleteTask')
 
-      div.innerHTML = taskName[i].value;
-      let check = document.createElement("input");
-      check.id = taskName[i].id;
-      check.setAttribute("type", "checkbox");
-      check.setAttribute("class", "checkbox");
+      let checkbox = document.createElement('input');
+      checkbox.id = task.id;
+      checkbox.setAttribute('type', 'checkbox');
+      checkbox.setAttribute('class', 'checkbox');
 
-      if (taskName[i].isDone == 1) {
-        check.checked = 1;
-      }
+      checkbox.checked = task.isDone;
       // закидываем в DOM построенные элементы
-      let taskContainer = document.querySelector("div#content");
       taskContainer.append(div);
-      div.append(check); // input.checked (input)
+      div.append(checkbox);
+      div.append(task.value)
       div.append(delBtn);
       // Прикрепляем к построенным элементам листинеры
-      check.addEventListener("change", (e) => saveBtn(e.target));
-      delBtn.addEventListener("click", (e) => deleteTask(e.target));
-    }
-  }
-};
-
-const saveBtn = (btnId) => {
-  const isDone = (tasks) => {
-    if (tasks.id == btnId.id && tasks.isDone == 0) {
-      tasks.isDone = 1;
-    } else if (tasks.id == btnId.id && tasks.isDone == 1) {
-      tasks.isDone = 0;
-    }
+      checkbox.addEventListener('change', (e) => doNote(e.target));
+      delBtn.addEventListener('click', (e) => deleteTask(e.target));
+    })
   };
+   
+  }
 
-  const parseLC = JSON.parse(localStorage.getItem("tasks"));
-  const task = parseLC.map((tasks) => isDone(tasks));
-  localStorage.setItem("tasks", JSON.stringify(parseLC));
+const doNote = (checkbox) => { 
+  todos.find((todo) =>{ 
+    if (todo.id === Number(checkbox.id)) {
+      todo.isDone = !todo.isDone 
+    }
+  })
+  localStorage.setItem('tasksAll', JSON.stringify(todos));
+
 };
-
-// Сохраняем в LC значение input
+// Сохраняем в LS значение input
 const saveTask = () => {
   if (inputField.value.trim()) {
     let task = {
       id: Date.now(),
       value: inputField.value,
-      isDone: 0,
+      isDone: false,
     };
-    if (localStorage.getItem("tasks")) {
-      let jsonValueParse = JSON.parse(localStorage.getItem("tasks"));
 
-      jsonValueParse.push(task);
-      jsonValueParse = JSON.stringify(jsonValueParse);
-      localStorage.setItem("tasks", jsonValueParse);
+    if (todos) {
+      todos.push(task)
+      localStorage.setItem('tasksAll', JSON.stringify(todos));
     } else {
-      const jsonValue = JSON.stringify([task]);
-      localStorage.setItem("tasks", jsonValue);
+      todos = [task]
+      const stringifyTasks = JSON.stringify(todos);
+      localStorage.setItem('tasksAll', stringifyTasks);
     }
+  } else {
+    alert('Введите корректные данные')
   }
+  inputField.value = ''
 };
 
-// Очистка выводимых данных после обновление LC
-const clearTasks = () => {
-  if (document.querySelector("div#content")) {
-    let divContent = document.querySelector("div#content");
-    while (divContent.firstChild) {
-      divContent.removeChild(divContent.firstChild);
-    }
-  }
-};
+
 
 // Удалить все таски
 const deleteTasks = () => {
   clearTasks();
+  localStorage.removeItem('tasks')
+  todos = []
 };
 
 // Удалить одну таску
 const deleteTask = (taskbtn) => {
-  clearTasks();
-  const dlt = (tasks, id, currentId, parseLC) => {
-    if (tasks.id == id) {
-      parseLC.splice(currentId, 1);
-      stringLC = JSON.stringify(parseLC);
-      localStorage.setItem("tasks", stringLC);
-    }
-  };
-
-  const parseLC = JSON.parse(localStorage.getItem("tasks"));
-  const task = parseLC.map((tasks, currentId) => {
-    dlt(tasks, taskbtn.id, currentId, parseLC);
-  });
-  viewTask();
+  todos = todos.filter(todo => todo.id !== Number(taskbtn.id))
+  localStorage.setItem('tasksAll', JSON.stringify(todos));
+  displayTasks();
 };
 
-const switchTasks = (taskName) => {
-  localStorage.setItem("filter", taskName);
+const switchTasks = (name) => {
+  localStorage.setItem('filter', name);
+  filterStatus = localStorage.getItem('filter');
 };
 
-filterAll.addEventListener("click", () => {
-  switchTasks("tasks");
-  clearTasks();
-  viewTask();
+filterAll.addEventListener('click', () => {
+  switchTasks('tasksAll');
+  displayTasks();
 });
 
-filterProcess.addEventListener("click", () => {
-  switchTasks("tasksProcess");
-  clearTasks();
-  viewTask();
+filterProcess.addEventListener('click', () => {
+  switchTasks('tasksProcess');
+  displayTasks();
 });
-filterCompleted.addEventListener("click", () => {
-  switchTasks("tasksCompleted");
-  clearTasks();
-  viewTask();
+filterCompleted.addEventListener('click', () => {
+  switchTasks('tasksCompleted');
+  displayTasks();
 });
 
-document.addEventListener("DOMContentLoaded", () => viewTask());
+document.addEventListener('DOMContentLoaded', () => displayTasks());
 
-btn.addEventListener("click", () => {
+btn.addEventListener('click', () => {
   saveTask();
-  clearTasks();
-  viewTask();
+  displayTasks();
 });
 
-btnDelete.addEventListener("click", () => deleteTasks());
+btnDelete.addEventListener('click', () => deleteTasks());

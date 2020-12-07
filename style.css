@@ -10,12 +10,16 @@ p#txt{
 }
 
 div#wrapper {
-    margin: 200px;
+    margin: 100px; 
     margin-left: 600px;
     margin-right: 600px;
+    /* padding: 30px;  */
+    margin-top: 20px;
+    width: 500px;
+    height: 390px;
+    /* background-color:rgb(238, 238, 230); */
+    background-color:rgb(255, 255, 255);
 
-    padding: 30px;
-    background-color:rgb(238, 238, 230);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -23,24 +27,54 @@ div#wrapper {
     border-radius: 5px;
 }
 
+
 div#content{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    /* align-items: star; */
     margin-top: 10px;
-    padding-right: 300px;
+    width: 400px;
+    /* border: 1px; */
+    /* border-color: brown ; */
+    /* padding-right: 200px; */
     /* margin-right: 320px; */
-    background-color: rgb(255, 166, 166);
+    background-color: rgba(125, 192, 190, 0.164);
     border-radius: 2px;
 
+    /* justify-content: space-between; */
 
 }
 
 input.checkbox {
-    padding-left: 300px;
+    padding-left: auto;
+    /* border: none; */
+    
 }
 content.button {
 
 }
+
+.deleteTask{
+    /* display: flex; */
+    /* margin-left: 62px; */
+    border: none;
+    color:  white;
+    background-color: rgb(255, 105, 105);
+
+}
+
+.task {
+    display: flex;
+    /* padding-right: 200px; */
+    justify-content: space-between;
+    /* align-items: center; */
+
+}
+
 div.filter {
     display: flex;
+    align-items: baseline;
 }
 
 div#tools {
@@ -50,14 +84,42 @@ div#tools {
 button#filter-all {
     margin-top: 2px;
     margin-right: 6px;
+    border: none;
+    color:  white;
+    background-color: rgb(186, 201, 49);
 }
 button#filter-process {
     margin-top: 2px;
     margin-right: 6px;
+    border: none;
+    color:  white;
+    background-color: rgb(201, 191, 49);
+
 }
 
 button#filter-completed {
     margin-top: 2px;
+    border: none;
+    color:  white;
 
-    /* margin-right: 6px; */
+    background-color: rgb(49, 201, 100);
+
+}
+
+button#submite{
+    border: none;
+    color:  white;
+    background-color: rgb(49, 201, 100);
+
+}
+button#delete{
+    border: none;
+    color:  white;
+    background-color: rgb(201, 49, 49);
+}
+
+
+#value-to-save {
+    border:yes;
+    /* border-color: rgb(255, 255, 255); */
 }
