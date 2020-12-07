@@ -109,7 +109,7 @@ const saveTask = () => {
 // Удалить все таски
 const deleteTasks = () => {
   clearTasks();
-  localStorage.removeItem('tasks')
+  localStorage.clear('tasks')
   todos = []
 };
 
