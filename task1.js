@@ -17,14 +17,13 @@ const clearTasks = () => {
 
 const filter = () => {
   if (todos){
-    console.log(typeof(filterStatus))
-    if (filterStatus === 'tasksProcess') {
-      return todos.filter((task) => !task.isDone);
-    }
-    if (filterStatus === 'tasksCompleted') {
-      return todos.filter((task) => task.isDone);
-    } else {
-      return todos;
+    switch (filterStatus) {
+      case 'tasksProcess':
+        return todos.filter((task) => !task.isDone);
+      case 'tasksCompleted':
+        return todos.filter((task) => task.isDone);
+      default:
+         return todos;
     }
   }
 }
@@ -42,7 +41,7 @@ const displayTasks = () => {
   if (todos) {
 
       tasks.forEach( (task, i) => {
-      let taskContainer = document.querySelector('div#content');
+      let taskContainer = document.querySelector('#content');
       // Строим DOM элементы
       let div = document.createElement('div');
       div.setAttribute('id', i);
@@ -57,8 +56,8 @@ const displayTasks = () => {
       checkbox.id = task.id;
       checkbox.setAttribute('type', 'checkbox');
       checkbox.setAttribute('class', 'checkbox');
-
       checkbox.checked = task.isDone;
+      
       // закидываем в DOM построенные элементы
       taskContainer.append(div);
       div.append(checkbox);
